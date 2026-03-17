@@ -1,0 +1,99 @@
+# Sample Linux auth.log
+# Contains normal activity, brute force attacks, successful compromise, and privilege escalation
+# Your parser should be able to extract and categorize all of these events
+
+# === NORMAL MORNING ACTIVITY ===
+Jan 15 08:00:01 webserver CRON[1001]: pam_unix(cron:session): session opened for user root by (uid=0)
+Jan 15 08:00:01 webserver CRON[1001]: pam_unix(cron:session): session closed for user root
+Jan 15 08:15:32 webserver sshd[1234]: Accepted publickey for admin from 192.168.1.10 port 52413 ssh2
+Jan 15 08:15:32 webserver sshd[1234]: pam_unix(sshd:session): session opened for user admin by (uid=0)
+Jan 15 08:20:45 webserver sudo: admin : TTY=pts/0 ; PWD=/home/admin ; USER=root ; COMMAND=/bin/systemctl status nginx
+Jan 15 08:25:00 webserver sshd[1234]: pam_unix(sshd:session): session closed for user admin
+
+# === NORMAL USER ACTIVITY ===
+Jan 15 09:00:15 webserver sshd[1500]: Accepted password for developer from 192.168.1.50 port 49821 ssh2
+Jan 15 09:00:15 webserver sshd[1500]: pam_unix(sshd:session): session opened for user developer by (uid=0)
+Jan 15 09:30:00 webserver sudo: developer : TTY=pts/1 ; PWD=/var/www ; USER=root ; COMMAND=/bin/tail -f /var/log/nginx/error.log
+Jan 15 12:00:00 webserver sshd[1500]: pam_unix(sshd:session): session closed for user developer
+
+# === BRUTE FORCE ATTACK ON SSH (from external IP) ===
+Jan 15 14:22:01 webserver sshd[2001]: Failed password for root from 203.0.113.50 port 55001 ssh2
+Jan 15 14:22:03 webserver sshd[2002]: Failed password for root from 203.0.113.50 port 55002 ssh2
+Jan 15 14:22:05 webserver sshd[2003]: Failed password for root from 203.0.113.50 port 55003 ssh2
+Jan 15 14:22:07 webserver sshd[2004]: Failed password for root from 203.0.113.50 port 55004 ssh2
+Jan 15 14:22:09 webserver sshd[2005]: Failed password for root from 203.0.113.50 port 55005 ssh2
+Jan 15 14:22:11 webserver sshd[2006]: Failed password for root from 203.0.113.50 port 55006 ssh2
+Jan 15 14:22:13 webserver sshd[2007]: Failed password for root from 203.0.113.50 port 55007 ssh2
+Jan 15 14:22:15 webserver sshd[2008]: Failed password for root from 203.0.113.50 port 55008 ssh2
+Jan 15 14:22:17 webserver sshd[2009]: Failed password for root from 203.0.113.50 port 55009 ssh2
+Jan 15 14:22:19 webserver sshd[2010]: Failed password for root from 203.0.113.50 port 55010 ssh2
+Jan 15 14:22:21 webserver sshd[2011]: message repeated 5 times: [ Failed password for root from 203.0.113.50 port 55011 ssh2]
+Jan 15 14:22:25 webserver sshd[2012]: Connection closed by 203.0.113.50 port 55012 [preauth]
+
+# === USERNAME ENUMERATION ATTEMPT (invalid users) ===
+Jan 15 15:00:01 webserver sshd[2100]: Failed password for invalid user admin123 from 198.51.100.25 port 60001 ssh2
+Jan 15 15:00:03 webserver sshd[2101]: Failed password for invalid user test from 198.51.100.25 port 60002 ssh2
+Jan 15 15:00:05 webserver sshd[2102]: Failed password for invalid user guest from 198.51.100.25 port 60003 ssh2
+Jan 15 15:00:07 webserver sshd[2103]: Failed password for invalid user user from 198.51.100.25 port 60004 ssh2
+Jan 15 15:00:09 webserver sshd[2104]: Failed password for invalid user oracle from 198.51.100.25 port 60005 ssh2
+Jan 15 15:00:11 webserver sshd[2105]: Failed password for invalid user postgres from 198.51.100.25 port 60006 ssh2
+Jan 15 15:00:13 webserver sshd[2106]: Failed password for invalid user mysql from 198.51.100.25 port 60007 ssh2
+Jan 15 15:00:15 webserver sshd[2107]: Failed password for invalid user ftpuser from 198.51.100.25 port 60008 ssh2
+
+# === SUCCESSFUL COMPROMISE AFTER BRUTE FORCE ===
+Jan 15 16:30:00 webserver sshd[2200]: Failed password for backup from 45.33.32.156 port 44001 ssh2
+Jan 15 16:30:02 webserver sshd[2201]: Failed password for backup from 45.33.32.156 port 44002 ssh2
+Jan 15 16:30:04 webserver sshd[2202]: Failed password for backup from 45.33.32.156 port 44003 ssh2
+Jan 15 16:30:06 webserver sshd[2203]: Accepted password for backup from 45.33.32.156 port 44004 ssh2
+Jan 15 16:30:06 webserver sshd[2203]: pam_unix(sshd:session): session opened for user backup by (uid=0)
+Jan 15 16:30:15 webserver sudo: backup : TTY=pts/2 ; PWD=/home/backup ; USER=root ; COMMAND=/bin/cat /etc/shadow
+Jan 15 16:30:20 webserver sudo: backup : TTY=pts/2 ; PWD=/home/backup ; USER=root ; COMMAND=/bin/bash
+Jan 15 16:35:00 webserver sshd[2203]: pam_unix(sshd:session): session closed for user backup
+
+# === OFF-HOURS SUSPICIOUS ACTIVITY (3 AM) ===
+Jan 16 03:15:00 webserver sshd[3001]: Accepted password for developer from 10.0.0.99 port 33001 ssh2
+Jan 16 03:15:00 webserver sshd[3001]: pam_unix(sshd:session): session opened for user developer by (uid=0)
+Jan 16 03:15:30 webserver sudo: developer : TTY=pts/0 ; PWD=/home/developer ; USER=root ; COMMAND=/bin/useradd -m -s /bin/bash backdoor
+Jan 16 03:15:45 webserver sudo: developer : TTY=pts/0 ; PWD=/home/developer ; USER=root ; COMMAND=/bin/passwd backdoor
+Jan 16 03:16:00 webserver sudo: developer : TTY=pts/0 ; PWD=/home/developer ; USER=root ; COMMAND=/usr/sbin/usermod -aG sudo backdoor
+Jan 16 03:20:00 webserver sshd[3001]: pam_unix(sshd:session): session closed for user developer
+
+# === FAILED SUDO ATTEMPTS ===
+Jan 15 17:00:00 webserver sudo: developer : command not allowed ; TTY=pts/1 ; PWD=/home/developer ; USER=root ; COMMAND=/bin/rm -rf /var/log
+Jan 15 17:00:15 webserver sudo: developer : command not allowed ; TTY=pts/1 ; PWD=/home/developer ; USER=root ; COMMAND=/bin/cat /etc/shadow
+Jan 15 17:00:30 webserver sudo: developer : 3 incorrect password attempts ; TTY=pts/1 ; PWD=/home/developer ; USER=root ; COMMAND=/bin/su -
+
+# === SU ATTEMPTS ===
+Jan 15 17:30:00 webserver su[4001]: Successful su for root by admin
+Jan 15 17:30:00 webserver su[4001]: + /dev/pts/0 admin:root
+Jan 15 17:45:00 webserver su[4002]: FAILED su for root by developer
+Jan 15 17:45:00 webserver su[4002]: - /dev/pts/1 developer:root
+
+# === CRON ACTIVITY (normal) ===
+Jan 15 18:00:01 webserver CRON[5001]: pam_unix(cron:session): session opened for user root by (uid=0)
+Jan 15 18:00:01 webserver CRON[5001]: pam_unix(cron:session): session closed for user root
+Jan 15 18:15:01 webserver CRON[5002]: pam_unix(cron:session): session opened for user www-data by (uid=0)
+Jan 15 18:15:01 webserver CRON[5002]: pam_unix(cron:session): session closed for user www-data
+
+# === PASSWORD CHANGES ===
+Jan 15 19:00:00 webserver passwd[6001]: pam_unix(passwd:chauthtok): password changed for admin
+Jan 15 19:05:00 webserver chage[6002]: changed password expiry for admin
+
+# === SYSTEM SERVICE RESTARTS ===
+Jan 15 20:00:00 webserver systemd-logind[1]: New session 45 of user admin.
+Jan 15 20:00:00 webserver systemd-logind[1]: Session 45 logged out. Waiting for processes to exit.
+Jan 15 20:00:01 webserver systemd-logind[1]: Removed session 45.
+
+# === LOCKOUT EVENT ===
+Jan 15 21:00:00 webserver sshd[7001]: Failed password for testuser from 192.168.1.200 port 22001 ssh2
+Jan 15 21:00:02 webserver sshd[7002]: Failed password for testuser from 192.168.1.200 port 22002 ssh2
+Jan 15 21:00:04 webserver sshd[7003]: Failed password for testuser from 192.168.1.200 port 22003 ssh2
+Jan 15 21:00:06 webserver sshd[7004]: Failed password for testuser from 192.168.1.200 port 22004 ssh2
+Jan 15 21:00:08 webserver sshd[7005]: Failed password for testuser from 192.168.1.200 port 22005 ssh2
+Jan 15 21:00:10 webserver pam_tally2[7006]: user testuser (1005) tally 5, deny 5
+
+# === LATE NIGHT NORMAL ACTIVITY (on-call admin) ===
+Jan 15 23:30:00 webserver sshd[8001]: Accepted publickey for oncall from 192.168.1.15 port 51234 ssh2
+Jan 15 23:30:00 webserver sshd[8001]: pam_unix(sshd:session): session opened for user oncall by (uid=0)
+Jan 15 23:35:00 webserver sudo: oncall : TTY=pts/0 ; PWD=/home/oncall ; USER=root ; COMMAND=/bin/systemctl restart nginx
+Jan 15 23:40:00 webserver sshd[8001]: pam_unix(sshd:session): session closed for user oncall

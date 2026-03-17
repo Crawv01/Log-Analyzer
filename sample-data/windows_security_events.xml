@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Events>
+  <!-- Normal successful logon - Interactive -->
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4624</EventID>
+      <TimeCreated SystemTime="2024-01-15T08:30:15.123Z" />
+      <Computer>WORKSTATION01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-5-18</Data>
+      <Data Name="SubjectUserName">WORKSTATION01$</Data>
+      <Data Name="SubjectDomainName">CORPORATE</Data>
+      <Data Name="TargetUserSid">S-1-5-21-123456789-1234567890-1234567890-1001</Data>
+      <Data Name="TargetUserName">jsmith</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="LogonType">2</Data>
+      <Data Name="LogonProcessName">User32</Data>
+      <Data Name="AuthenticationPackageName">Negotiate</Data>
+      <Data Name="WorkstationName">WORKSTATION01</Data>
+      <Data Name="IpAddress">-</Data>
+      <Data Name="IpPort">-</Data>
+    </EventData>
+  </Event>
+
+  <!-- RDP logon from internal IP - normal -->
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4624</EventID>
+      <TimeCreated SystemTime="2024-01-15T09:15:42.456Z" />
+      <Computer>SERVER01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-5-18</Data>
+      <Data Name="SubjectUserName">SERVER01$</Data>
+      <Data Name="SubjectDomainName">CORPORATE</Data>
+      <Data Name="TargetUserSid">S-1-5-21-123456789-1234567890-1234567890-1002</Data>
+      <Data Name="TargetUserName">admin.jones</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="LogonType">10</Data>
+      <Data Name="LogonProcessName">User32</Data>
+      <Data Name="AuthenticationPackageName">Negotiate</Data>
+      <Data Name="WorkstationName">WORKSTATION05</Data>
+      <Data Name="IpAddress">192.168.1.105</Data>
+      <Data Name="IpPort">52413</Data>
+    </EventData>
+  </Event>
+
+  <!-- BRUTE FORCE ATTACK SIMULATION - Multiple failed logons -->
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4625</EventID>
+      <TimeCreated SystemTime="2024-01-15T14:22:01.100Z" />
+      <Computer>SERVER01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-0-0</Data>
+      <Data Name="SubjectUserName">-</Data>
+      <Data Name="SubjectDomainName">-</Data>
+      <Data Name="TargetUserSid">S-1-0-0</Data>
+      <Data Name="TargetUserName">administrator</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="Status">0xC000006D</Data>
+      <Data Name="FailureReason">%%2313</Data>
+      <Data Name="SubStatus">0xC000006A</Data>
+      <Data Name="LogonType">10</Data>
+      <Data Name="LogonProcessName">User32</Data>
+      <Data Name="AuthenticationPackageName">Negotiate</Data>
+      <Data Name="WorkstationName">ATTACKER-PC</Data>
+      <Data Name="IpAddress">203.0.113.50</Data>
+      <Data Name="IpPort">49821</Data>
+    </EventData>
+  </Event>
+
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4625</EventID>
+      <TimeCreated SystemTime="2024-01-15T14:22:03.200Z" />
+      <Computer>SERVER01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-0-0</Data>
+      <Data Name="SubjectUserName">-</Data>
+      <Data Name="SubjectDomainName">-</Data>
+      <Data Name="TargetUserSid">S-1-0-0</Data>
+      <Data Name="TargetUserName">administrator</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="Status">0xC000006D</Data>
+      <Data Name="FailureReason">%%2313</Data>
+      <Data Name="SubStatus">0xC000006A</Data>
+      <Data Name="LogonType">10</Data>
+      <Data Name="LogonProcessName">User32</Data>
+      <Data Name="AuthenticationPackageName">Negotiate</Data>
+      <Data Name="WorkstationName">ATTACKER-PC</Data>
+      <Data Name="IpAddress">203.0.113.50</Data>
+      <Data Name="IpPort">49822</Data>
+    </EventData>
+  </Event>
+
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4625</EventID>
+      <TimeCreated SystemTime="2024-01-15T14:22:05.300Z" />
+      <Computer>SERVER01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-0-0</Data>
+      <Data Name="SubjectUserName">-</Data>
+      <Data Name="SubjectDomainName">-</Data>
+      <Data Name="TargetUserSid">S-1-0-0</Data>
+      <Data Name="TargetUserName">administrator</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="Status">0xC000006D</Data>
+      <Data Name="FailureReason">%%2313</Data>
+      <Data Name="SubStatus">0xC000006A</Data>
+      <Data Name="LogonType">10</Data>
+      <Data Name="LogonProcessName">User32</Data>
+      <Data Name="AuthenticationPackageName">Negotiate</Data>
+      <Data Name="WorkstationName">ATTACKER-PC</Data>
+      <Data Name="IpAddress">203.0.113.50</Data>
+      <Data Name="IpPort">49823</Data>
+    </EventData>
+  </Event>
+
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4625</EventID>
+      <TimeCreated SystemTime="2024-01-15T14:22:07.400Z" />
+      <Computer>SERVER01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-0-0</Data>
+      <Data Name="SubjectUserName">-</Data>
+      <Data Name="SubjectDomainName">-</Data>
+      <Data Name="TargetUserSid">S-1-0-0</Data>
+      <Data Name="TargetUserName">administrator</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="Status">0xC000006D</Data>
+      <Data Name="FailureReason">%%2313</Data>
+      <Data Name="SubStatus">0xC000006A</Data>
+      <Data Name="LogonType">10</Data>
+      <Data Name="LogonProcessName">User32</Data>
+      <Data Name="AuthenticationPackageName">Negotiate</Data>
+      <Data Name="WorkstationName">ATTACKER-PC</Data>
+      <Data Name="IpAddress">203.0.113.50</Data>
+      <Data Name="IpPort">49824</Data>
+    </EventData>
+  </Event>
+
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4625</EventID>
+      <TimeCreated SystemTime="2024-01-15T14:22:09.500Z" />
+      <Computer>SERVER01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-0-0</Data>
+      <Data Name="SubjectUserName">-</Data>
+      <Data Name="SubjectDomainName">-</Data>
+      <Data Name="TargetUserSid">S-1-0-0</Data>
+      <Data Name="TargetUserName">administrator</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="Status">0xC000006D</Data>
+      <Data Name="FailureReason">%%2313</Data>
+      <Data Name="SubStatus">0xC000006A</Data>
+      <Data Name="LogonType">10</Data>
+      <Data Name="LogonProcessName">User32</Data>
+      <Data Name="AuthenticationPackageName">Negotiate</Data>
+      <Data Name="WorkstationName">ATTACKER-PC</Data>
+      <Data Name="IpAddress">203.0.113.50</Data>
+      <Data Name="IpPort">49825</Data>
+    </EventData>
+  </Event>
+
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4625</EventID>
+      <TimeCreated SystemTime="2024-01-15T14:22:11.600Z" />
+      <Computer>SERVER01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-0-0</Data>
+      <Data Name="SubjectUserName">-</Data>
+      <Data Name="SubjectDomainName">-</Data>
+      <Data Name="TargetUserSid">S-1-0-0</Data>
+      <Data Name="TargetUserName">administrator</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="Status">0xC000006D</Data>
+      <Data Name="FailureReason">%%2313</Data>
+      <Data Name="SubStatus">0xC000006A</Data>
+      <Data Name="LogonType">10</Data>
+      <Data Name="LogonProcessName">User32</Data>
+      <Data Name="AuthenticationPackageName">Negotiate</Data>
+      <Data Name="WorkstationName">ATTACKER-PC</Data>
+      <Data Name="IpAddress">203.0.113.50</Data>
+      <Data Name="IpPort">49826</Data>
+    </EventData>
+  </Event>
+
+  <!-- PASSWORD SPRAY SIMULATION - Different users, same source -->
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4625</EventID>
+      <TimeCreated SystemTime="2024-01-15T16:00:01.000Z" />
+      <Computer>DC01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-0-0</Data>
+      <Data Name="SubjectUserName">-</Data>
+      <Data Name="SubjectDomainName">-</Data>
+      <Data Name="TargetUserSid">S-1-0-0</Data>
+      <Data Name="TargetUserName">asmith</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="Status">0xC000006D</Data>
+      <Data Name="FailureReason">%%2313</Data>
+      <Data Name="SubStatus">0xC000006A</Data>
+      <Data Name="LogonType">3</Data>
+      <Data Name="LogonProcessName">NtLmSsp</Data>
+      <Data Name="AuthenticationPackageName">NTLM</Data>
+      <Data Name="WorkstationName">SPRAY-HOST</Data>
+      <Data Name="IpAddress">198.51.100.25</Data>
+      <Data Name="IpPort">55001</Data>
+    </EventData>
+  </Event>
+
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4625</EventID>
+      <TimeCreated SystemTime="2024-01-15T16:00:03.000Z" />
+      <Computer>DC01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-0-0</Data>
+      <Data Name="SubjectUserName">-</Data>
+      <Data Name="SubjectDomainName">-</Data>
+      <Data Name="TargetUserSid">S-1-0-0</Data>
+      <Data Name="TargetUserName">bjohnson</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="Status">0xC000006D</Data>
+      <Data Name="FailureReason">%%2313</Data>
+      <Data Name="SubStatus">0xC000006A</Data>
+      <Data Name="LogonType">3</Data>
+      <Data Name="LogonProcessName">NtLmSsp</Data>
+      <Data Name="AuthenticationPackageName">NTLM</Data>
+      <Data Name="WorkstationName">SPRAY-HOST</Data>
+      <Data Name="IpAddress">198.51.100.25</Data>
+      <Data Name="IpPort">55002</Data>
+    </EventData>
+  </Event>
+
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4625</EventID>
+      <TimeCreated SystemTime="2024-01-15T16:00:05.000Z" />
+      <Computer>DC01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-0-0</Data>
+      <Data Name="SubjectUserName">-</Data>
+      <Data Name="SubjectDomainName">-</Data>
+      <Data Name="TargetUserSid">S-1-0-0</Data>
+      <Data Name="TargetUserName">cwilliams</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="Status">0xC000006D</Data>
+      <Data Name="FailureReason">%%2313</Data>
+      <Data Name="SubStatus">0xC000006A</Data>
+      <Data Name="LogonType">3</Data>
+      <Data Name="LogonProcessName">NtLmSsp</Data>
+      <Data Name="AuthenticationPackageName">NTLM</Data>
+      <Data Name="WorkstationName">SPRAY-HOST</Data>
+      <Data Name="IpAddress">198.51.100.25</Data>
+      <Data Name="IpPort">55003</Data>
+    </EventData>
+  </Event>
+
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4625</EventID>
+      <TimeCreated SystemTime="2024-01-15T16:00:07.000Z" />
+      <Computer>DC01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-0-0</Data>
+      <Data Name="SubjectUserName">-</Data>
+      <Data Name="SubjectDomainName">-</Data>
+      <Data Name="TargetUserSid">S-1-0-0</Data>
+      <Data Name="TargetUserName">dlee</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="Status">0xC000006D</Data>
+      <Data Name="FailureReason">%%2313</Data>
+      <Data Name="SubStatus">0xC000006A</Data>
+      <Data Name="LogonType">3</Data>
+      <Data Name="LogonProcessName">NtLmSsp</Data>
+      <Data Name="AuthenticationPackageName">NTLM</Data>
+      <Data Name="WorkstationName">SPRAY-HOST</Data>
+      <Data Name="IpAddress">198.51.100.25</Data>
+      <Data Name="IpPort">55004</Data>
+    </EventData>
+  </Event>
+
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4625</EventID>
+      <TimeCreated SystemTime="2024-01-15T16:00:09.000Z" />
+      <Computer>DC01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-0-0</Data>
+      <Data Name="SubjectUserName">-</Data>
+      <Data Name="SubjectDomainName">-</Data>
+      <Data Name="TargetUserSid">S-1-0-0</Data>
+      <Data Name="TargetUserName">ebrown</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="Status">0xC000006D</Data>
+      <Data Name="FailureReason">%%2313</Data>
+      <Data Name="SubStatus">0xC000006A</Data>
+      <Data Name="LogonType">3</Data>
+      <Data Name="LogonProcessName">NtLmSsp</Data>
+      <Data Name="AuthenticationPackageName">NTLM</Data>
+      <Data Name="WorkstationName">SPRAY-HOST</Data>
+      <Data Name="IpAddress">198.51.100.25</Data>
+      <Data Name="IpPort">55005</Data>
+    </EventData>
+  </Event>
+
+  <!-- OFF-HOURS ACTIVITY - Login at 3 AM -->
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4624</EventID>
+      <TimeCreated SystemTime="2024-01-16T03:15:00.000Z" />
+      <Computer>FILESERVER01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-5-18</Data>
+      <Data Name="SubjectUserName">FILESERVER01$</Data>
+      <Data Name="SubjectDomainName">CORPORATE</Data>
+      <Data Name="TargetUserSid">S-1-5-21-123456789-1234567890-1234567890-1001</Data>
+      <Data Name="TargetUserName">jsmith</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="LogonType">3</Data>
+      <Data Name="LogonProcessName">NtLmSsp</Data>
+      <Data Name="AuthenticationPackageName">NTLM</Data>
+      <Data Name="WorkstationName">UNKNOWN-PC</Data>
+      <Data Name="IpAddress">10.0.0.55</Data>
+      <Data Name="IpPort">61234</Data>
+    </EventData>
+  </Event>
+
+  <!-- PRIVILEGED LOGON - Admin with special privileges -->
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4672</EventID>
+      <TimeCreated SystemTime="2024-01-15T10:00:00.000Z" />
+      <Computer>DC01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-5-21-123456789-1234567890-1234567890-500</Data>
+      <Data Name="SubjectUserName">Administrator</Data>
+      <Data Name="SubjectDomainName">CORPORATE</Data>
+      <Data Name="PrivilegeList">SeSecurityPrivilege SeTakeOwnershipPrivilege SeLoadDriverPrivilege SeBackupPrivilege SeRestorePrivilege SeDebugPrivilege SeSystemEnvironmentPrivilege SeImpersonatePrivilege SeDelegateSessionUserImpersonatePrivilege SeEnableDelegationPrivilege</Data>
+    </EventData>
+  </Event>
+
+  <!-- Normal logoff -->
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4634</EventID>
+      <TimeCreated SystemTime="2024-01-15T17:30:00.000Z" />
+      <Computer>WORKSTATION01.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="TargetUserSid">S-1-5-21-123456789-1234567890-1234567890-1001</Data>
+      <Data Name="TargetUserName">jsmith</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="LogonType">2</Data>
+    </EventData>
+  </Event>
+
+  <!-- Network share access - potential lateral movement -->
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4624</EventID>
+      <TimeCreated SystemTime="2024-01-15T14:45:00.000Z" />
+      <Computer>WORKSTATION02.corporate.local</Computer>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-5-18</Data>
+      <Data Name="SubjectUserName">WORKSTATION02$</Data>
+      <Data Name="SubjectDomainName">CORPORATE</Data>
+      <Data Name="TargetUserSid">S-1-5-21-123456789-1234567890-1234567890-1001</Data>
+      <Data Name="TargetUserName">jsmith</Data>
+      <Data Name="TargetDomainName">CORPORATE</Data>
+      <Data Name="LogonType">3</Data>
+      <Data Name="LogonProcessName">NtLmSsp</Data>
+      <Data Name="AuthenticationPackageName">NTLM</Data>
+      <Data Name="WorkstationName">WORKSTATION01</Data>
+      <Data Name="IpAddress">192.168.1.101</Data>
+      <Data Name="IpPort">49999</Data>
+    </EventData>
+  </Event>
+
+</Events>

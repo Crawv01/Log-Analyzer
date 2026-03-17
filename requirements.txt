@@ -1,0 +1,10 @@
+# Log Analyzer Dependencies
+
+# Testing
+pytest>=7.0.0
+
+# Optional: Enhanced output
+colorama>=0.4.6
+
+# For future frontend development
+# flask>=2.0.0  # Uncomment if building web backend
