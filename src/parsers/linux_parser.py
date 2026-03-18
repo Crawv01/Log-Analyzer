@@ -1,15 +1,8 @@
 """
 Linux Auth Log Parser
 
-This module parses Linux authentication logs (auth.log, secure).
-
-YOUR TASK: Implement the LinuxAuthParser class to parse auth.log files.
-
-HINTS:
-1. Study the sample auth.log file to understand the format
-2. Use regular expressions - they're your friend here
-3. Handle different event types: SSH success/failure, sudo, su, session events
-4. Don't forget to handle edge cases like "invalid user" messages
+Parses Linux authentication logs (auth.log, secure) into normalized AuthEvent objects.
+Handles SSH logins, sudo commands, su attempts, and session events.
 """
 
 import re
@@ -24,257 +17,271 @@ from src.models.events import AuthEvent, EventType, SourceType, LogonType
 class LinuxAuthParser(BaseParser):
     """
     Parser for Linux auth.log / secure log files.
-    
+
     Handles:
-    - SSH authentication (success and failure)
+    - SSH authentication (success and failure, including invalid users)
     - Sudo commands (success and failure)
-    - Su (user switching)
+    - Su (user switching) success and failure
     - Session open/close events
     - PAM authentication events
     """
-    
+
     def __init__(self):
-        """
-        Initialize the parser.
-        
-        TODO: Set up your regex patterns here.
-        
-        You'll need patterns for:
-        - SSH successful login
-        - SSH failed login (valid user)
-        - SSH failed login (invalid user)
-        - Sudo success
-        - Sudo failure
-        - Su success
-        - Su failure
-        - Session open
-        - Session close
-        
-        HINT: Compile your regexes here for better performance:
-        self._ssh_success_pattern = re.compile(r'...')
-        """
-        
-        # TODO: Define your regex patterns
-        # 
-        # Example SSH success pattern (you need to finish this):
-        # Pattern should match: "sshd[1234]: Accepted publickey for admin from 192.168.1.10 port 52413 ssh2"
-        #
-        # self._ssh_accepted_pattern = re.compile(
-        #     r'sshd\[(\d+)\]: Accepted (\w+) for (\w+) from ([\d.]+) port (\d+)'
-        # )
-        #
-        # Groups would be: (pid, auth_method, username, ip, port)
-        
-        pass  # DELETE THIS AND IMPLEMENT
-    
+        # SSH successful login
+        # Matches: "sshd[1234]: Accepted publickey for admin from 192.168.1.10 port 52413 ssh2"
+        self._ssh_accepted = re.compile(
+            r'sshd\[(\d+)\]: Accepted (\w+) for (\S+) from ([\d.]+) port (\d+)'
+        )
+
+        # SSH failed login - invalid user
+        # Matches: "sshd[2100]: Failed password for invalid user admin123 from 198.51.100.25 port 60001 ssh2"
+        self._ssh_failed_invalid = re.compile(
+            r'sshd\[(\d+)\]: Failed password for invalid user (\S+) from ([\d.]+) port (\d+)'
+        )
+
+        # SSH failed login - valid user
+        # Matches: "sshd[2001]: Failed password for root from 203.0.113.50 port 55001 ssh2"
+        self._ssh_failed = re.compile(
+            r'sshd\[(\d+)\]: Failed password for (\S+) from ([\d.]+) port (\d+)'
+        )
+
+        # Sudo success
+        # Matches: "sudo: admin : TTY=pts/0 ; PWD=/home/admin ; USER=root ; COMMAND=/bin/systemctl status nginx"
+        self._sudo_success = re.compile(
+            r'sudo:\s+(\S+)\s+:.*?USER=(\S+)\s*;\s*COMMAND=(.*)'
+        )
+
+        # Sudo failure - command not allowed
+        # Matches: "sudo: developer : command not allowed ; TTY=pts/1 ..."
+        self._sudo_failed_notallowed = re.compile(
+            r'sudo:\s+(\S+)\s+: command not allowed'
+        )
+
+        # Sudo failure - incorrect password attempts
+        # Matches: "sudo: developer : 3 incorrect password attempts ..."
+        self._sudo_failed_badpass = re.compile(
+            r'sudo:\s+(\S+)\s+: \d+ incorrect password attempts'
+        )
+
+        # Su success
+        # Matches: "su[4001]: Successful su for root by admin"
+        self._su_success = re.compile(
+            r'su\[(\d+)\]: Successful su for (\S+) by (\S+)'
+        )
+
+        # Su failure
+        # Matches: "su[4002]: FAILED su for root by developer"
+        self._su_failed = re.compile(
+            r'su\[(\d+)\]: FAILED su for (\S+) by (\S+)'
+        )
+
+        # Session opened
+        # Matches: "sshd[1234]: pam_unix(sshd:session): session opened for user admin by (uid=0)"
+        self._session_open = re.compile(
+            r'pam_unix\(\w+:session\): session opened for user (\S+)'
+        )
+
+        # Session closed
+        # Matches: "sshd[1234]: pam_unix(sshd:session): session closed for user admin"
+        self._session_closed = re.compile(
+            r'pam_unix\(\w+:session\): session closed for user (\S+)'
+        )
+
     @property
     def parser_name(self) -> str:
         return "Linux Auth Log Parser"
-    
+
     def get_supported_extensions(self) -> List[str]:
-        return ['.log', '']  # auth.log has .log, 'secure' has no extension
-    
-    def parse_file(self, filepath: Path) -> List['AuthEvent']:
+        return ['.log', '']  # auth.log has .log extension, 'secure' has none
+
+    def parse_file(self, filepath: Path) -> List[AuthEvent]:
         """
-        Parse an entire auth.log file.
-        
-        TODO: Implement this method
-        
-        Steps:
-        1. Open the file
-        2. Iterate through each line
-        3. Call parse_line() for each line
-        4. Collect non-None results into a list
-        5. Return the list
-        
-        Handle errors gracefully - log parsing errors but don't crash.
+        Parse an entire auth.log file and return a list of AuthEvents.
+        Skips lines that don't match any known pattern.
+        Logs warnings for lines that fail to parse but continues processing.
         """
-        
-        # TODO: Implement
-        # 
-        # events = []
-        # with open(filepath, 'r') as f:
-        #     for line_num, line in enumerate(f, 1):
-        #         try:
-        #             event = self.parse_line(line.strip())
-        #             if event:
-        #                 events.append(event)
-        #         except Exception as e:
-        #             # Log the error but continue parsing
-        #             print(f"Warning: Could not parse line {line_num}: {e}")
-        # return events
-        
-        pass  # DELETE THIS AND IMPLEMENT
-    
-    def parse_line(self, line: str) -> Optional['AuthEvent']:
+        events = []
+        with open(filepath, 'r') as f:
+            for line_num, line in enumerate(f, 1):
+                try:
+                    event = self.parse_line(line.strip())
+                    if event:
+                        events.append(event)
+                except Exception as e:
+                    print(f"Warning: Could not parse line {line_num}: {e}")
+        return events
+
+    def parse_line(self, line: str) -> Optional[AuthEvent]:
         """
-        Parse a single log line.
-        
-        TODO: Implement this method
-        
-        Steps:
-        1. Skip empty lines and comments
-        2. Extract the timestamp (beginning of line)
-        3. Try to match against each of your regex patterns
-        4. If a pattern matches, create an AuthEvent with the extracted data
-        5. If no patterns match, return None (not an auth event we care about)
-        
-        IMPORTANT: The year is NOT included in syslog timestamps!
-        You'll need to assume the current year (or make it configurable).
+        Parse a single log line into an AuthEvent.
+        Returns None if the line doesn't match any known auth event pattern.
         """
-        
-        # TODO: Implement
-        #
-        # if not line or line.startswith('#'):
-        #     return None
-        #
-        # # Try SSH accepted pattern
-        # match = self._ssh_accepted_pattern.search(line)
-        # if match:
-        #     return self._create_ssh_success_event(line, match)
-        #
-        # # Try SSH failed pattern
-        # match = self._ssh_failed_pattern.search(line)
-        # if match:
-        #     return self._create_ssh_failure_event(line, match)
-        #
-        # # ... try other patterns
-        #
-        # return None
-        
-        pass  # DELETE THIS AND IMPLEMENT
-    
+        if not line or line.startswith('#'):
+            return None
+
+        # SSH accepted (success)
+        match = self._ssh_accepted.search(line)
+        if match:
+            return self._create_ssh_success_event(line, match)
+
+        # SSH failed - check invalid user first (more specific pattern)
+        match = self._ssh_failed_invalid.search(line)
+        if match:
+            return self._create_ssh_failure_event(line, match, invalid_user=True)
+
+        # SSH failed - valid user
+        match = self._ssh_failed.search(line)
+        if match:
+            return self._create_ssh_failure_event(line, match, invalid_user=False)
+
+        # Sudo failure - command not allowed
+        match = self._sudo_failed_notallowed.search(line)
+        if match:
+            return self._create_sudo_event(line, match, success=False)
+
+        # Sudo failure - bad password
+        match = self._sudo_failed_badpass.search(line)
+        if match:
+            return self._create_sudo_event(line, match, success=False)
+
+        # Sudo success
+        match = self._sudo_success.search(line)
+        if match:
+            return self._create_sudo_event(line, match, success=True)
+
+        # Su success
+        match = self._su_success.search(line)
+        if match:
+            return self._create_su_event(line, match, success=True)
+
+        # Su failure
+        match = self._su_failed.search(line)
+        if match:
+            return self._create_su_event(line, match, success=False)
+
+        # Session opened
+        match = self._session_open.search(line)
+        if match:
+            return self._create_session_event(line, match, opened=True)
+
+        # Session closed
+        match = self._session_closed.search(line)
+        if match:
+            return self._create_session_event(line, match, opened=False)
+
+        return None
+
     def _parse_syslog_timestamp(self, line: str) -> Optional[datetime]:
         """
         Extract timestamp from a syslog-format line.
-        
-        TODO: Implement this method
-        
-        Syslog format: "Jan 15 14:22:01 hostname ..."
-        
-        HINT: 
-        - Use datetime.strptime() with format "%b %d %H:%M:%S"
-        - Handle the missing year (assume current year)
-        - Watch out for year boundary issues (Dec 31 -> Jan 1)
-        
-        Returns:
-            datetime object, or None if parsing fails
+
+        Syslog format: "Jan 15 08:00:01 hostname ..."
+        Note: syslog does not include the year, so we assume the current year.
         """
-        
-        # TODO: Implement
-        #
-        # try:
-        #     # Extract first 15 characters (timestamp portion)
-        #     timestamp_str = line[:15]
-        #     dt = datetime.strptime(timestamp_str, "%b %d %H:%M:%S")
-        #     # Add current year
-        #     dt = dt.replace(year=datetime.now().year)
-        #     return dt
-        # except ValueError:
-        #     return None
-        
-        pass  # DELETE THIS AND IMPLEMENT
-    
-    def _create_ssh_success_event(self, line: str, match: re.Match) -> 'AuthEvent':
+        try:
+            timestamp_str = line[:15]
+            dt = datetime.strptime(timestamp_str, "%b %d %H:%M:%S")
+            dt = dt.replace(year=datetime.now().year)
+            return dt
+        except ValueError:
+            return None
+
+    def _create_ssh_success_event(self, line: str, match: re.Match) -> AuthEvent:
         """
         Create an AuthEvent from a successful SSH login.
-        
-        TODO: Implement this method
-        
-        Extract from match groups:
-        - pid (for reference)
-        - auth_method (password, publickey)
-        - username
-        - source_ip
-        - port
-        
-        Return a properly populated AuthEvent.
+        Groups: (pid, auth_method, username, source_ip, port)
         """
-        
-        # TODO: Implement
-        
-        pass  # DELETE THIS AND IMPLEMENT
-    
-    def _create_ssh_failure_event(self, line: str, match: re.Match, invalid_user: bool = False) -> 'AuthEvent':
+        _, auth_method, username, source_ip, _ = match.groups()
+        return AuthEvent(
+            timestamp=self._parse_syslog_timestamp(line),
+            event_type=EventType.LOGON_SUCCESS,
+            source_type=SourceType.SSH,
+            username=username,
+            source_ip=source_ip,
+            logon_type=LogonType.NETWORK,
+            auth_method=auth_method,
+            success=True,
+            raw_message=line,
+        )
+
+    def _create_ssh_failure_event(self, line: str, match: re.Match, invalid_user: bool = False) -> AuthEvent:
         """
         Create an AuthEvent from a failed SSH login.
-        
-        TODO: Implement this method
-        
-        Similar to success, but:
-        - event_type should be LOGON_FAILURE
-        - Note whether it's an "invalid user" attempt
-        - This distinction is important for detecting enumeration attacks
+        Groups: (pid, username, source_ip, port)
+        invalid_user=True means the username doesn't exist on the system (enumeration attempt).
         """
-        
-        # TODO: Implement
-        
-        pass  # DELETE THIS AND IMPLEMENT
-    
-    def _create_sudo_event(self, line: str, match: re.Match, success: bool) -> 'AuthEvent':
+        _, username, source_ip, _ = match.groups()
+        tags = ['invalid_user'] if invalid_user else []
+        failure_reason = 'Invalid user' if invalid_user else 'Bad password'
+        return AuthEvent(
+            timestamp=self._parse_syslog_timestamp(line),
+            event_type=EventType.LOGON_FAILURE,
+            source_type=SourceType.SSH,
+            username=username,
+            source_ip=source_ip,
+            logon_type=LogonType.NETWORK,
+            auth_method='password',
+            failure_reason=failure_reason,
+            success=False,
+            tags=tags,
+            raw_message=line,
+        )
+
+    def _create_sudo_event(self, line: str, match: re.Match, success: bool) -> AuthEvent:
         """
-        Create an AuthEvent from a sudo command.
-        
-        TODO: Implement this method
-        
-        Sudo logs contain:
-        - Username
-        - TTY
-        - PWD (working directory)
-        - Target user (usually root)
-        - Command executed
-        
-        This is PRIVILEGE_ESCALATION type event.
+        Create an AuthEvent from a sudo command attempt.
+        Success groups: (username, target_user, command)
+        Failure groups: (username,)
+        Sudo is a privilege escalation event.
         """
-        
-        # TODO: Implement
-        
-        pass  # DELETE THIS AND IMPLEMENT
+        username = match.group(1)
+        target_user = match.group(2) if success and len(match.groups()) >= 2 else None
+        command = match.group(3).strip() if success and len(match.groups()) >= 3 else None
 
+        return AuthEvent(
+            timestamp=self._parse_syslog_timestamp(line),
+            event_type=EventType.PRIVILEGE_ESCALATION,
+            source_type=SourceType.LINUX_AUTH,
+            username=username,
+            target_hostname=target_user,
+            auth_method='sudo',
+            success=success,
+            failure_reason=None if success else 'Command not allowed or bad password',
+            raw_message=line,
+            tags=['sudo', f'command:{command}'] if command else ['sudo'],
+        )
 
-# =============================================================================
-# TESTING YOUR IMPLEMENTATION
-# =============================================================================
-#
-# Once implemented, test with:
-#
-# ```python
-# from src.parsers.linux_parser import LinuxAuthParser
-# from pathlib import Path
-#
-# parser = LinuxAuthParser()
-# events = parser.parse_file(Path("sample-data/auth.log"))
-#
-# for event in events:
-#     print(f"{event.timestamp} - {event.event_type} - {event.username} from {event.source_ip}")
-# ```
-#
-# Expected output should show:
-# - SSH logins (success and failure)
-# - The brute force attack events
-# - Sudo commands
-# - Session events
-#
-# =============================================================================
+    def _create_su_event(self, line: str, match: re.Match, success: bool) -> AuthEvent:
+        """
+        Create an AuthEvent from a su (switch user) attempt.
+        Groups: (pid, target_user, username)
+        """
+        _, target_user, username = match.groups()
+        return AuthEvent(
+            timestamp=self._parse_syslog_timestamp(line),
+            event_type=EventType.LOGON_SUCCESS if success else EventType.LOGON_FAILURE,
+            source_type=SourceType.LINUX_AUTH,
+            username=username,
+            target_hostname=target_user,
+            auth_method='su',
+            logon_type=LogonType.INTERACTIVE,
+            success=success,
+            failure_reason=None if success else 'Authentication failure',
+            raw_message=line,
+            tags=['su'],
+        )
 
-
-# =============================================================================
-# REGEX HINTS (Don't look unless stuck!)
-# =============================================================================
-#
-# SSH Accepted:
-#   r'sshd\[(\d+)\]: Accepted (\w+) for (\S+) from ([\d.]+) port (\d+)'
-#
-# SSH Failed (valid user):
-#   r'sshd\[(\d+)\]: Failed password for (\S+) from ([\d.]+) port (\d+)'
-#
-# SSH Failed (invalid user):
-#   r'sshd\[(\d+)\]: Failed password for invalid user (\S+) from ([\d.]+) port (\d+)'
-#
-# Sudo success:
-#   r'sudo:\s+(\S+)\s+:.*USER=(\S+)\s+;\s+COMMAND=(.*)'
-#
-# Sudo failure:
-#   r'sudo:\s+(\S+)\s+: command not allowed'
-#
-# =============================================================================
+    def _create_session_event(self, line: str, match: re.Match, opened: bool) -> AuthEvent:
+        """
+        Create an AuthEvent from a PAM session open/close event.
+        Groups: (username,)
+        """
+        username = match.group(1)
+        return AuthEvent(
+            timestamp=self._parse_syslog_timestamp(line),
+            event_type=EventType.SESSION_OPEN if opened else EventType.SESSION_CLOSED,
+            source_type=SourceType.LINUX_AUTH,
+            username=username,
+            success=True,
+            raw_message=line,
+        )
