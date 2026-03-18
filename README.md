@@ -1,88 +1,114 @@
-# Log Analyzer
+# 🔍 Python Security Log Analyzer
 
-A security log analysis tool for detecting authentication anomalies and potential threats.
+A Python-based security log analysis tool that parses Linux and Windows system logs to detect brute force attacks, password spraying, and anomalous authentication behavior — with automated threat reporting.
 
-## Project Structure
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
+![Security](https://img.shields.io/badge/Security-CompTIA-red?style=flat)
+![MITRE](https://img.shields.io/badge/MITRE_ATT%26CK-covered-orange?style=flat)
 
-```
-log-analyzer/
-├── docs/
-│   └── DOMAIN_KNOWLEDGE.md    # READ THIS FIRST!
-├── sample-data/
-│   ├── auth.log               # Sample Linux auth logs
-│   └── windows_security_events.xml  # Sample Windows events
-├── src/
-│   ├── parsers/
-│   │   ├── __init__.py
-│   │   ├── base_parser.py     # Abstract base class
-│   │   ├── linux_parser.py    # Linux auth.log parser (IMPLEMENT THIS)
-│   │   └── windows_parser.py  # Windows XML parser (IMPLEMENT THIS)
-│   ├── analyzers/
-│   │   ├── __init__.py
-│   │   ├── brute_force.py     # Brute force detection (IMPLEMENT THIS)
-│   │   ├── anomaly.py         # Anomaly detection (IMPLEMENT THIS)
-│   │   └── statistics.py      # Statistics calculator (IMPLEMENT THIS)
-│   ├── models/
-│   │   ├── __init__.py
-│   │   └── events.py          # Data models (IMPLEMENT THIS)
-│   └── main.py                # CLI entry point
-├── tests/
-│   └── test_parsers.py        # Unit tests (IMPLEMENT THIS)
-├── frontend/                  # React dashboard (Phase 3)
-├── requirements.txt
-└── README.md
-```
+---
 
-## Getting Started
+## ✨ Features
 
-### Phase 1: Learn the Domain
-1. Read `docs/DOMAIN_KNOWLEDGE.md` thoroughly
-2. Answer all the research questions
-3. Examine the sample data files
+- **Linux Log Parsing** — Parses `/var/log/auth.log` format for SSH and authentication events
+- **Windows Event Log Parsing** — Parses Windows Security Event XML logs (Event IDs 4624, 4625, etc.)
+- **Brute Force Detection** — Identifies repeated failed login attempts against MITRE ATT&CK T1110.001
+- **Password Spray Detection** — Detects low-and-slow attacks across multiple accounts (T1110.003)
+- **Anomaly Detection** — Flags unusual login times, new source IPs, and statistical outliers
+- **Statistics Engine** — Summarizes event counts, top offenders, and authentication patterns
+- **Automated Reporting** — Generates threat summaries from analyzed log data
+- **CLI Interface** — Run analysis directly from the command line with format flags
 
-### Phase 2: Implement the Core
-Work through the skeleton files in this order:
-1. `src/models/events.py` - Define your data structures
-2. `src/parsers/linux_parser.py` - Parse auth.log files
-3. `src/parsers/windows_parser.py` - Parse Windows XML logs
-4. `src/analyzers/statistics.py` - Basic statistics
-5. `src/analyzers/brute_force.py` - Detect brute force attacks
-6. `src/analyzers/anomaly.py` - Detect anomalies
-7. `tests/test_parsers.py` - Test your implementations
+---
 
-### Phase 3: Build the Frontend
-- Create React dashboard
-- Visualize events and detections
-- Add filtering and search
+## 🛡 MITRE ATT&CK Coverage
 
-## Running the Project
+| Detection | Technique ID |
+|---|---|
+| Brute Force | T1110.001 |
+| Password Spray | T1110.003 |
+| Valid Accounts | T1078 |
+| Remote Services | T1021 |
+
+---
+
+## 🛠 Tech Stack
+
+- **Python 3** — Core analysis engine
+- **XML parsing** — Windows Security Event log ingestion
+- **Regex** — Linux auth.log pattern matching
+- **pytest** — Unit testing
+- **React** *(planned)* — Dashboard frontend for event visualization
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Python 3.8+
+
+### Installation
 
 ```bash
-# Install dependencies
+git clone https://github.com/Crawv01/Log-Analyzer.git
+cd Log-Analyzer
 pip install -r requirements.txt
+```
 
-# Run the analyzer
+### Run
+
+```bash
+# Analyze a Linux auth log
 python -m src.main --input sample-data/auth.log --format linux
+
+# Analyze Windows Security Event logs
+python -m src.main --input sample-data/windows_security_events.xml --format windows
 
 # Run tests
 python -m pytest tests/
 ```
 
-## Skills Demonstrated
+---
 
-- Log parsing and normalization
-- Security event analysis
-- Attack pattern detection (brute force, password spray)
-- Anomaly detection
-- Data visualization
-- Python/JavaScript development
-- Understanding of authentication protocols
+## 📁 Project Structure
 
-## MITRE ATT&CK Coverage
+```
+log-analyzer/
+├── docs/
+│   └── DOMAIN_KNOWLEDGE.md    # Security domain research and notes
+├── sample-data/
+│   ├── auth.log               # Sample Linux auth logs
+│   └── windows_security_events.xml  # Sample Windows Security Events
+├── src/
+│   ├── main.py                # CLI entry point
+│   ├── models/
+│   │   └── events.py          # Data models for log events
+│   ├── parsers/
+│   │   ├── base_parser.py     # Abstract base parser class
+│   │   ├── linux_parser.py    # Linux auth.log parser
+│   │   └── windows_parser.py  # Windows XML event parser
+│   └── analyzers/
+│       ├── brute_force.py     # Brute force attack detection
+│       ├── anomaly.py         # Anomaly detection
+│       └── statistics.py      # Authentication statistics
+├── tests/
+│   └── test_parsers.py        # Unit tests
+├── requirements.txt
+└── README.md
+```
 
-| Detection | Technique |
-|-----------|-----------|
-| Brute Force | T1110.001 |
-| Password Spray | T1110.003 |
-| Valid Accounts | T1078 |
-| Remote Services | T1021 |
+---
+
+## 🗺 Roadmap
+
+- [ ] React dashboard for event visualization
+- [ ] Filtering and search across log events
+- [ ] Export reports to PDF/CSV
+- [ ] Real-time log monitoring mode
+- [ ] Additional log format support (Apache, nginx, syslog)
+
+---
+
+## 📄 License
+
+MIT
