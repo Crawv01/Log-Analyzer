@@ -183,16 +183,11 @@ class WindowsEventParser(BaseParser):
         return result
 
     def _parse_timestamp(self, timestamp_str: str) -> Optional[datetime]:
-        """
-        Parse a Windows ISO 8601 timestamp string to a datetime object.
-        Windows uses format: "2024-01-15T14:22:01.100Z"
-        The trailing 'Z' means UTC — we strip it and replace with +00:00.
-        """
         if not timestamp_str:
             return None
         try:
             if timestamp_str.endswith('Z'):
-                timestamp_str = timestamp_str[:-1] + '+00:00'
+                timestamp_str = timestamp_str[:-1]  # Just remove the Z, don't add +00:00
             return datetime.fromisoformat(timestamp_str)
         except ValueError:
             return None
