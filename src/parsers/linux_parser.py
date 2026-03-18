@@ -172,16 +172,10 @@ class LinuxAuthParser(BaseParser):
         return None
 
     def _parse_syslog_timestamp(self, line: str) -> Optional[datetime]:
-        """
-        Extract timestamp from a syslog-format line.
-
-        Syslog format: "Jan 15 08:00:01 hostname ..."
-        Note: syslog does not include the year, so we assume the current year.
-        """
         try:
-            timestamp_str = line[:15]
-            dt = datetime.strptime(timestamp_str, "%b %d %H:%M:%S")
-            dt = dt.replace(year=datetime.now().year)
+            current_year = datetime.now().year
+            timestamp_str = f"{current_year} {line[:15]}"
+            dt = datetime.strptime(timestamp_str, "%Y %b %d %H:%M:%S")
             return dt
         except ValueError:
             return None
